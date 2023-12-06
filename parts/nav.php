@@ -1,5 +1,7 @@
-<!--if opened from index php then not active if not then active-->
 <?php
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
     $active = "active";
     if (strpos($_SERVER['PHP_SELF'], 'index.php')) {
         $active = "";
@@ -27,9 +29,18 @@
                         <li class="nav-item">
                         <a class="nav-link" href="listings.php">Listings</a>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" href="login.php">Login</a>
-                        </li>
+                        <?php if (isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true) { ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="bookings.php">Bookings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="auth/logout.php">Logout</a>
+                            </li>
+                        <?php } else { ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="login.php">Login</a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </div>                            
             </nav>            

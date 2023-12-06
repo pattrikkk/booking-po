@@ -1,3 +1,9 @@
+<?php
+    if(isset($_SESSION['user_id'])){
+        header('Location: index.php');
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,17 +31,23 @@
             <div class="card rounded">
                 <div class="card-body">
                     <h5 class="card-title text-center">Login</h5>
-                    <form>
+                    <form method="POST" action="auth/process_login.php">
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="text" class="form-control" id="email" placeholder="Enter your email" required>
+                            <input type="text" class="form-control" id="email" placeholder="Enter your email" name="email" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password:</label>
-                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password" name="password" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Login</button>
                     </form>
+                    <?php 
+                        require_once 'lib/Common.php';
+                        use lib\Common;
+                        $common = new \lib\Common();
+                        $common->printAlerts();
+                    ?>
                     <p class="text-center mt-3">Don't have an account? <a href="register.php" class="register-link">Register here</a></p>
                 </div>
             </div>

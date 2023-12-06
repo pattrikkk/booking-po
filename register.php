@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    if(isset($_SESSION['user_id'])){
+        header('Location: index.php');
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,33 +32,39 @@
             <div class="card rounded">
                 <div class="card-body">
                     <h5 class="card-title text-center">Register</h5>
-                    <form>
+                    <form method="POST" action="auth/process_registration.php">
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="text" class="form-control" id="email" placeholder="Enter your email" required>
+                            <input type="text" class="form-control" id="email" placeholder="Enter your email" name="email" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Password:</label>
-                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password" name="password" required>
                         </div>
                         <div class="form-group">
                             <label for="password">Confirm password:</label>
-                            <input type="password" class="form-control" id="cpassword" placeholder="Enter your password" required>
+                            <input type="password" class="form-control" id="cpassword" placeholder="Enter your password" name="cpassword" required>
                         </div>
                         <div class="form-group">
                             <label for="pnumber">Phone number:</label>
-                            <input type="text" class="form-control" id="pnumber" placeholder="Enter your phone number" required>
+                            <input type="text" class="form-control" id="pnumber" placeholder="Enter your phone number" name="pnumber" required>
                         </div>
                         <div class="form-group">
                             <label for="fname">First name:</label>
-                            <input type="text" class="form-control" id="fname" placeholder="Enter your first name" required>
+                            <input type="text" class="form-control" id="fname" placeholder="Enter your first name" name="fname" required>
                         </div>
                         <div class="form-group">
                             <label for="lname">Last name:</label>
-                            <input type="text" class="form-control" id="lname" placeholder="Enter your last name" required>
+                            <input type="text" class="form-control" id="lname" placeholder="Enter your last name" name="lname" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Create an account</button>
                     </form>
+                    <?php 
+                        require_once 'lib/Common.php';
+                        use lib\Common;
+                        $common = new \lib\Common();
+                        $common->printAlerts();
+                    ?>
                     <p class="text-center mt-3">Already have an account? <a href="login.php" class="login-link">Login here</a></p>
                 </div>
             </div>
