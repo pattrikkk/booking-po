@@ -1,4 +1,7 @@
 <?php
+    require_once 'lib/Common.php';
+    use lib\Common;
+    $common = new \lib\Common();
     if(isset($_SESSION['user_id'])){
         header('Location: index.php');
     }
@@ -42,12 +45,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Login</button>
                     </form>
-                    <?php 
-                        require_once 'lib/Common.php';
-                        use lib\Common;
-                        $common = new \lib\Common();
-                        $common->printAlerts();
-                    ?>
+                    <?php $common->printAlerts(); ?>
                     <p class="text-center mt-3">Don't have an account? <a href="register.php" class="register-link">Register here</a></p>
                 </div>
             </div>
