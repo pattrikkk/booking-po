@@ -1,7 +1,7 @@
 <?php
-    if (session_status() == PHP_SESSION_NONE) {
-        session_start();
-    }
+    require_once 'lib/Common.php';
+    $common = new \lib\Common();
+    $common->startSession();
     $active = "active";
     if (strpos($_SERVER['PHP_SELF'], 'index.php')) {
         $active = "";
@@ -29,7 +29,7 @@
                         <li class="nav-item">
                         <a class="nav-link" href="listings.php">Listings</a>
                         </li>
-                        <?php if (isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true) { ?>
+                        <?php if ($common->isUserLoggedIn()) { ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="bookings.php">Bookings</a>
                             </li>

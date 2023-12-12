@@ -1,3 +1,26 @@
+<?php
+require_once 'lib/Common.php';
+require_once 'lib/DB.php';
+
+$common = new \lib\Common();
+$common->startSession();
+
+$db = new \lib\DB();
+
+if (isset($_GET['id'])) {
+    $listing = $db->getListing($_GET['id']);
+    $amenities = json_decode($listing['amenities']);
+
+    $creator = $db->getCreatorOfListing($_GET['id']);
+    $creatorName = $creator['firstName'] . " " . $creator['lastName'];
+    $creatorPhone = $creator['phone'];
+} else {
+    header('Location: listings.php');
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +45,7 @@
         <?php include 'parts/nav.php'; ?>
 
         <div class="container mt-3">
-            <h1>Listing title</h1>
+            <h1><?= $listing["name"]?></h1>
             <div class="row">
                 <!-- Main Image Section -->
                 <div class="col-md-8">
@@ -46,61 +69,52 @@
                 <div class="col-md-2 col-3 py-2">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-wifi fa-2x my-auto"></i>
-                        <p class="mb-auto">Wi-Fi</p>
+                        <p class="mb-auto"><?php echo in_array("wifi", $amenities) ? "Wi-Fi" : "No Wi-Fi" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-paw fa-2x my-auto"></i>
-                        <p class="mb-auto">Pets Allowed</p>
+                        <p class="mb-auto"><?php echo in_array("petsAllowed", $amenities) ? "Pets allowed" : "Pets not allowed" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-parking fa-2x my-auto"></i>
-                        <p class="mb-auto">Parking</p>
+                        <p class="mb-auto"><?php echo in_array("parking", $amenities) ? "Parking in the area" : "No parking  in the area" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-utensils fa-2x my-auto"></i>
-                        <p class="mb-auto">Catering</p>
+                        <p class="mb-auto"><?php echo in_array("catering", $amenities) ? "Catering is included in the price" : "Catering is not included in the price" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-bed fa-2x my-auto"></i>
-                        <p class="mb-auto">X beds</p>
+                        <p class="mb-auto"><?= $listing["beds"] ?> beds</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-door-open fa-2x my-auto"></i>
-                        <p class="mb-auto">X bedrooms</p>
+                        <p class="mb-auto"><?= $listing["rooms"] ?> rooms</p>
                     </div>
                 </div>
 
             </div>
             <div class="row my-3">
                 <div class="col-md-8 mb-3">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-
+                    <h2>Description</h2>
+                    <p><?= $listing["description"]?></p>
                 </div>
                 <div class="col-md-4">
                     <div class="card rounded">
                         <div class="card-body">
-                            <h5 class="card-title">John Doe</h5>
-                            <p class="card-text">+421 942 531 032</p>
-                            <p class="card-text"><small class="text-muted">Published on: October 1, 2023</small></p>
+                            <h5 class="card-title"><?= $creatorName ?></h5>
+                            <p class="card-text"><?= $creatorPhone ?></p>
+                            <p class="card-text"><small class="text-muted">Published on: <?= $listing["publishedDate"] ?></small></p>
                             <a href="#" class="btn btn-primary w-100">Contact</a>
                         </div>
                     </div>

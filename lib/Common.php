@@ -28,7 +28,13 @@ class Common
                 "type" => "danger",
                 "message" => "Invalid credentials."
             ]
-        ]
+        ],
+        "listing" => [
+            "success" => [
+                "type" => "success",
+                "message" => "Listing created successfully."
+            ]
+        ],
     ];
 
     function printAlerts(): void
@@ -41,5 +47,17 @@ class Common
                 echo "<div class=\" mt-3 rounded alert alert-{$alert['type']}\">{$alert['message']}</div>";
             }
         }
+    }
+
+    function startSession(): void
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    function isUserLoggedIn(): bool
+    {
+        return isset($_SESSION['user_id']);
     }
 }

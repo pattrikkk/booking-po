@@ -1,3 +1,13 @@
+<?php
+    require_once 'lib/Common.php';
+    require_once 'lib/DB.php';
+
+    $common = new lib\Common();
+    $db = new lib\DB();
+
+    $common->startSession();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,10 +30,13 @@
 <body>
     <div class="tm-main-content" id="top">
         <?php include 'parts/nav.php'; ?>
-
         <div class="container">
+            <?php $common->printAlerts(); ?>
             <div class="row mt-5">
                 <div class="col-lg-3 mb-4">
+                    <?php if ($common->isUserLoggedIn()) { ?>
+                        <a class="btn btn-primary btn-block mb-3 text-white" href="create_listing.php">Create Listing</a>
+                    <?php } ?>
                     <div class="card rounded">
                         <div class="card-body">
                             <form action="index.php" method="get" class="tm-search-form">
@@ -107,24 +120,28 @@
                     </div>
                 </div>
                 <div class="col-lg-9">
-                    <div class="rounded bg-light p-3 mb-4">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <img src="placeholder.png" class="img-fluid rounded" alt="Listing Image">
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="d-flex flex-column h-100">
-                                    <h5 class="mt-0 mb-2 font-weight-bold">Listing Title</h5>
-                                    <p class="mb-1 font-weight-bold">Bratislava, Slovensko</p>
-                                    <p class="mb-3">A brief description of the listing to provide more information about
-                                        what it offers to users.</p>
-                                    <div class="ml-auto">
-                                        <a href="listing.php" class="btn btn-primary">View Details</a>
+                    <?php foreach ($db->getListings() as $listing) { ?>
+                        <div class="rounded bg-light p-3 mb-4">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <img src="placeholder.png" class="img-fluid rounded" alt="Listing Image">
+                                </div>
+                                <div class="col-sm-8">
+                                    <div class="d-flex flex-column h-100">
+                                        <h5 class="mt-0 mb-2 font-weight-bold"><?= $listing['name'] ?></h5>
+                                        <p class="mb-1 font-weight-bold"><?= $listing['location'] ?></p>
+                                        <p class="mb-1 text-truncate"><?= $listing['description'] ?></p>
+                                        
+                                        <!-- Display price on the left -->
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0 font-weight-bold"><?= $listing['price'] ?>€/night</h6>
+                                            <a href="listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary">View Details</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 </div>
             </div>
 

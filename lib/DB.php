@@ -117,4 +117,42 @@ class DB
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $result["id"];
     }
+
+    public function createListing(string $name, string $location, string $description, int $rooms, int $beds,  string $amenities, int $price, int $publishedBy) {
+        $sql = "INSERT INTO listing (name, location, description, rooms, beds, amenities, price, publishedBy) VALUES (:name, :location, :description, :rooms, :beds, :amenities, :price, :publishedBy)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":location", $location);
+        $stmt->bindParam(":description", $description);
+        $stmt->bindParam(":rooms", $rooms);
+        $stmt->bindParam(":beds", $beds);
+        $stmt->bindParam(":amenities", $amenities);
+        $stmt->bindParam(":price", $price);
+        $stmt->bindParam(":publishedBy", $publishedBy);
+        return $stmt->execute();
+    }
+
+    public function getListings(): array
+    {
+        $sql = "SELECT * FROM listing";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getListing(int $id): array {
+        $sql = "SELECT * FROM listing WHERE id = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getCreatorOfListing(int $id): array {
+        $sql = "SELECT * FROM user WHERE id = (SELECT publishedBy FROM listing WHERE id = :id)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
 }
