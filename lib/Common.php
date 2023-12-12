@@ -33,9 +33,25 @@ class Common
             "success" => [
                 "type" => "success",
                 "message" => "Listing created successfully."
-            ]
+            ],
+            "edited" => [
+                "type" => "success",
+                "message" => "Listing edited successfully."
+            ],
         ],
     ];
+
+    private $amenities = [
+        "wifi" => "Wi-Fi",
+        "parking" => "Parking",
+        "catering" => "Catering",
+        "petsAllowed" => "Pets Allowed"
+    ];
+
+    function getAmenities(): array
+    {
+        return $this->amenities;
+    }
 
     function printAlerts(): void
     {

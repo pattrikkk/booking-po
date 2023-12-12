@@ -155,4 +155,26 @@ class DB
         $stmt->execute();
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
+
+    public function updateListing(int $id, string $name, string $location, string $description, int $rooms, int $beds,  string $amenities, int $price, int $publishedBy) {
+        $sql = "UPDATE listing SET name = :name, location = :location, description = :description, rooms = :rooms, beds = :beds, amenities = :amenities, price = :price, publishedBy = :publishedBy WHERE id = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":location", $location);
+        $stmt->bindParam(":description", $description);
+        $stmt->bindParam(":rooms", $rooms);
+        $stmt->bindParam(":beds", $beds);
+        $stmt->bindParam(":amenities", $amenities);
+        $stmt->bindParam(":price", $price);
+        $stmt->bindParam(":publishedBy", $publishedBy);
+        return $stmt->execute();
+    }
+
+    public function deleteListing(int $id) {
+        $sql = "DELETE FROM listing WHERE id = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
+    }
 }

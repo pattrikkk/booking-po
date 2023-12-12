@@ -1,11 +1,21 @@
 <?php
 require_once 'lib/Common.php';
+require_once 'lib/DB.php';
 $common = new \lib\Common();
+$db = new \lib\DB();
 $common->startSession();
-if (!$common->isUserLoggedIn()) {
+$allAmenities = $common->getAmenities();
+
+if (!isset($_GET['id'])) {
     header('Location: index.php');
 }
-$allAmenities = $common->getAmenities();
+
+$creator = $db->getCreatorOfListing($_GET['id']);
+if (!$common->isUserLoggedIn() || $creator['id'] !== $_SESSION['user_id']) {
+    header('Location: index.php');
+}
+$listing = $db->getListing($_GET['id']);
+$amenities = json_decode($listing['amenities']);
 ?>
 
 <!DOCTYPE html>
@@ -32,15 +42,16 @@ $allAmenities = $common->getAmenities();
         <?php include 'parts/nav.php'; ?>
 
         <div class="container mt-3">
-            <h1 class="mb-4">Create a Listing</h1>
+            <h1 class="mb-4">Update a Listing</h1>
 
             <!-- Listing Creation Form -->
-            <form action="listings/process_listing.php" method="post" enctype="multipart/form-data">
+            <form action="listings/update_listing.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" value=<?=$listing['id']?>>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="listingTitle">Listing Title:</label>
-                            <input type="text" class="form-control" id="listingTitle" name="listingTitle" required>
+                            <input type="text" class="form-control" id="listingTitle" name="listingTitle" value=<?=$listing['name']?> required>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -58,7 +69,7 @@ $allAmenities = $common->getAmenities();
                             <label>Amenities:</label>
                             <?php foreach ($allAmenities as $key => $value) { ?>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id=<?=$key?> name="amenities[]" value=<?=$key?>>
+                                    <input type="checkbox" class="form-check-input" id=<?=$key?> name="amenities[]" value=<?=$key?> <?=in_array($key, $amenities) ? "checked" : ""?>>
                                     <label class="form-check-label" for=<?=$key?>><?=$value?></label>
                                 </div>
                             <?php } ?>
@@ -67,11 +78,11 @@ $allAmenities = $common->getAmenities();
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="beds">Number of Beds:</label>
-                            <input type="number" class="form-control" id="beds" name="beds" min="1" required>
+                            <input type="number" class="form-control" id="beds" name="beds" min="1" value=<?=$listing['beds']?> required>
                         </div>
                         <div class="form-group">
                             <label for="rooms">Number of Rooms:</label>
-                            <input type="number" class="form-control" id="rooms" name="rooms" min="1" required>
+                            <input type="number" class="form-control" id="rooms" name="rooms" min="1" value=<?=$listing['rooms']?> required>
                         </div>
                     </div>
                 </div>
@@ -81,13 +92,13 @@ $allAmenities = $common->getAmenities();
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="destination">Destination:</label>
-                            <input type="text" class="form-control" id="destination" name="destination" required>
+                            <input type="text" class="form-control" id="destination" name="destination" value=<?=$listing['location']?> required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="pricePerNight">Price Per Night (€):</label>
-                            <input type="number" class="form-control" id="pricePerNight" name="pricePerNight" min="0" step="0.01" required>
+                            <input type="number" class="form-control" id="pricePerNight" name="pricePerNight" min="0" step="0.01" value=<?=$listing['price']?> required>
                         </div>
                     </div>
                 </div>
@@ -95,10 +106,10 @@ $allAmenities = $common->getAmenities();
                 <!-- Description Section -->
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter your listing description" required></textarea>
+                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter your listing description" required><?=$listing['description']?></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Create Listing</button>
+                <button type="submit" class="btn btn-primary">Update Listing</button>
             </form>
             <!-- End Listing Creation Form -->
         </div>

@@ -45,6 +45,7 @@ if (isset($_GET['id'])) {
         <?php include 'parts/nav.php'; ?>
 
         <div class="container mt-3">
+            <?php $common->printAlerts(); ?>
             <h1><?= $listing["name"]?></h1>
             <div class="row">
                 <!-- Main Image Section -->

@@ -135,6 +135,10 @@
                                         <!-- Display price on the left -->
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h6 class="mb-0 font-weight-bold"><?= $listing['price'] ?>€/night</h6>
+                                            <?php if ($common->isUserLoggedIn() && $listing['publishedBy'] === $_SESSION['user_id']) { ?>
+                                                <a href="listings/delete_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary ml-auto mr-1">Delete listing</a>
+                                                <a href="update_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary ml-auto mr-1">Update listing</a>
+                                            <?php } ?>
                                             <a href="listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary">View Details</a>
                                         </div>
                                     </div>
