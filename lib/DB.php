@@ -4,7 +4,7 @@ namespace lib;
 
 class DB
 {
-    private $host = "localhost";
+    private $host = "db";
     private $port = 3306;
     private $username = "root";
     private $password = "";
