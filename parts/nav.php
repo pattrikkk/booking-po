@@ -31,7 +31,7 @@
                         </li>
                         <?php if ($common->isUserLoggedIn()) { ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="bookings.php">Bookings</a>
+                                <a class="nav-link" href="reservations.php">My reservations</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="auth/logout.php">Logout</a>

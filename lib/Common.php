@@ -51,6 +51,10 @@ class Common
             "invalidDates" => [
                 "type" => "danger",
                 "message" => "Invalid dates."
+            ],
+            "deleted" => [
+                "type" => "success",
+                "message" => "Reservation deleted successfully."
             ]
         ]
     ];
@@ -93,6 +97,7 @@ class Common
 
     function isUserLoggedIn(): bool
     {
+        $this->startSession();
         return isset($_SESSION['user_id']);
     }
 }

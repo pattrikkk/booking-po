@@ -9,10 +9,14 @@ function fillDaysBetween(start, end) {
 }
 
 let allReservedDays = [];
+let firstDays = [];
+let lastDays = [];
 for (let i = 0; i < reservations.length; i++) {
     const reservation = reservations[i];
     const days = fillDaysBetween(new Date(reservations[i]['dateFrom']), new Date(reservations[i]['dateTo']));
     allReservedDays = allReservedDays.concat(days);
+    firstDays.push(new Date(reservations[i]['dateFrom']));
+    lastDays.push(new Date(reservations[i]['dateTo']));
 }
 
 console.log(allReservedDays);

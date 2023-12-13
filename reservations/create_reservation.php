@@ -32,7 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($db->createReservation($userId, $listingId, $dateFrom, $dateTo, $message, $adults, $children)) {
-        header('Location: ../reservations.php?reservation=success');
+        $encodedData = json_encode($common->getAlert("reservation", "success"));
+        echo $encodedData;
         exit();
     }
 } else {

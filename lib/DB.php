@@ -209,4 +209,29 @@ class DB
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function getReservations(int $userId): array {
+        $sql = "SELECT * FROM reservation WHERE userId = :userId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function checkReservationOwner(int $reservationId, int $userId): bool {
+        $sql = "SELECT * FROM reservation WHERE id = :reservationId AND userId = :userId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return !empty($result);
+    }
+
+    public function deleteReservation(int $reservationId) {
+        $sql = "DELETE FROM reservation WHERE id = :reservationId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        return $stmt->execute();
+    }
 }

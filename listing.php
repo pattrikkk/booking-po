@@ -244,9 +244,36 @@ if (isset($_GET['id'])) {
     <script src="js/datepicker.min.js"></script>
     <script src="js/jquery.singlePageNav.min.js"></script>
     <script src="slick/slick.min.js"></script>
-    <script src="js/script.js"></script>
     <script>
         let reservations = <?= json_encode($reservations) ?>;
+
+        function sendReservation() {
+            console.log("clicked");
+            $.ajax({
+                url: 'reservations/create_reservation.php',
+                type: 'POST',
+                data: {
+                    'dateFrom': $('#dateFrom').val(),
+                    'dateTo': $('#dateTo').val(),
+                    'adults': $('#inputAdults').val(),
+                    'kids': $('#inputChildren').val(),
+                    'listingId': $('#inputListingId').val(),
+                    'message': $('#inputMessage').val()
+                },
+                success: function(data) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data["type"] == "success") {
+                        window.location.href = "reservations.php?reservation=success";
+                        return;
+                    }
+                    if($('#alert').children().length > 0) {
+                        $('#alert').children().remove();
+                    }
+                    $('#alert').append('<div class="alert rounded alert-'+ data["type"] +'" role="alert">'+data["message"]+'</div>');
+                }
+            });
+        }
     </script>
     <script src="js/calendar.js"></script>
     <script src="js/script.js"></script>
