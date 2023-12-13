@@ -28,8 +28,48 @@ class Common
                 "type" => "danger",
                 "message" => "Invalid credentials."
             ]
+        ],
+        "listing" => [
+            "success" => [
+                "type" => "success",
+                "message" => "Listing created successfully."
+            ],
+            "edited" => [
+                "type" => "success",
+                "message" => "Listing edited successfully."
+            ],
+        ],
+        "reservation" => [
+            "success" => [
+                "type" => "success",
+                "message" => "Reservation created successfully."
+            ],
+            "overlap" => [
+                "type" => "danger",
+                "message" => "Reservation overlaps with existing reservation."
+            ],
+            "invalidDates" => [
+                "type" => "danger",
+                "message" => "Invalid dates."
+            ],
+            "deleted" => [
+                "type" => "success",
+                "message" => "Reservation deleted successfully."
+            ]
         ]
     ];
+
+    private $amenities = [
+        "wifi" => "Wi-Fi",
+        "parking" => "Parking",
+        "catering" => "Catering",
+        "petsAllowed" => "Pets Allowed"
+    ];
+
+    function getAmenities(): array
+    {
+        return $this->amenities;
+    }
 
     function printAlerts(): void
     {
@@ -41,5 +81,23 @@ class Common
                 echo "<div class=\" mt-3 rounded alert alert-{$alert['type']}\">{$alert['message']}</div>";
             }
         }
+    }
+
+    function getAlert(string $param, string $type): array
+    {
+        return $this->alerts[$param][$type];
+    }
+
+    function startSession(): void
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    function isUserLoggedIn(): bool
+    {
+        $this->startSession();
+        return isset($_SESSION['user_id']);
     }
 }

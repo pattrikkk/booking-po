@@ -1,3 +1,27 @@
+<?php
+require_once 'lib/Common.php';
+require_once 'lib/DB.php';
+
+$common = new \lib\Common();
+$common->startSession();
+
+$db = new \lib\DB();
+
+if (isset($_GET['id'])) {
+    $listing = $db->getListing($_GET['id']);
+    $reservations = $db->getListingReservations($_GET['id']);
+    $amenities = json_decode($listing['amenities']);
+
+    $creator = $db->getCreatorOfListing($_GET['id']);
+    $creatorName = $creator['firstName'] . " " . $creator['lastName'];
+    $creatorPhone = $creator['phone'];
+} else {
+    header('Location: listings.php');
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +46,8 @@
         <?php include 'parts/nav.php'; ?>
 
         <div class="container mt-3">
-            <h1>Listing title</h1>
+            <?php $common->printAlerts(); ?>
+            <h1><?= $listing["name"]?></h1>
             <div class="row">
                 <!-- Main Image Section -->
                 <div class="col-md-8">
@@ -46,61 +71,52 @@
                 <div class="col-md-2 col-3 py-2">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-wifi fa-2x my-auto"></i>
-                        <p class="mb-auto">Wi-Fi</p>
+                        <p class="mb-auto"><?php echo in_array("wifi", $amenities) ? "Wi-Fi" : "No Wi-Fi" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-paw fa-2x my-auto"></i>
-                        <p class="mb-auto">Pets Allowed</p>
+                        <p class="mb-auto"><?php echo in_array("petsAllowed", $amenities) ? "Pets allowed" : "Pets not allowed" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-parking fa-2x my-auto"></i>
-                        <p class="mb-auto">Parking</p>
+                        <p class="mb-auto"><?php echo in_array("parking", $amenities) ? "Parking in the area" : "No parking  in the area" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-utensils fa-2x my-auto"></i>
-                        <p class="mb-auto">Catering</p>
+                        <p class="mb-auto"><?php echo in_array("catering", $amenities) ? "Catering is included in the price" : "Catering is not included in the price" ?></p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-bed fa-2x my-auto"></i>
-                        <p class="mb-auto">X beds</p>
+                        <p class="mb-auto"><?= $listing["beds"] ?> beds</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-3">
                     <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center">
                         <i class="fa fa-door-open fa-2x my-auto"></i>
-                        <p class="mb-auto">X bedrooms</p>
+                        <p class="mb-auto"><?= $listing["rooms"] ?> rooms</p>
                     </div>
                 </div>
 
             </div>
             <div class="row my-3">
                 <div class="col-md-8 mb-3">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Impedit corporis quis ipsum quae asperiores pariatur veniam commodi soluta sequi, modi eligendi harum ab, totam repellat repellendus debitis magnam! Libero, ratione.
-
+                    <h2>Description</h2>
+                    <p><?= $listing["description"]?></p>
                 </div>
                 <div class="col-md-4">
                     <div class="card rounded">
                         <div class="card-body">
-                            <h5 class="card-title">John Doe</h5>
-                            <p class="card-text">+421 942 531 032</p>
-                            <p class="card-text"><small class="text-muted">Published on: October 1, 2023</small></p>
+                            <h5 class="card-title"><?= $creatorName ?></h5>
+                            <p class="card-text"><?= $creatorPhone ?></p>
+                            <p class="card-text"><small class="text-muted">Published on: <?= $listing["publishedDate"] ?></small></p>
                             <a href="#" class="btn btn-primary w-100">Contact</a>
                         </div>
                     </div>
@@ -110,32 +126,33 @@
             <div class="row">
                 <div class="col-md-6 my-3">
                     <form class="border rounded p-4">
+                        <input type="hidden" name="listingId" id="inputListingId" value="<?= $listing["id"] ?>">
                         <h2 class="text-center mb-4">Reservation Form</h2>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label for="arrival">Arrival:</label>
-                                    <input type="date" class="form-control" id="arrival">
+                                    <input type="date" class="form-control" name="dateFrom" id="dateFrom">
                                 </div>
                             </div>
                             <div class=" col-lg-6">
                                 <div class="form-group">
                                     <label for="departure">Departure:</label>
-                                    <input type="date" class="form-control" id="departure">
+                                    <input type="date" class="form-control" name="dateTo" id="dateTo">
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="noadults">Number of adults:</label>
+                                    <label for="inputAdults">Number of adults:</label>
                                     <div class="input-group">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="adults">
                                                 <span class="fa fa-minus"></span>
                                             </button>
                                         </span>
-                                        <input type="number" name="quant[1]" class="form-control input-number" value="1" min="1" max="10" id="noadults">
+                                        <input type="number" name="adults" class="form-control input-number" value="1" min="1" max="10" id="inputAdults">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
+                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="adults">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </span>
@@ -144,16 +161,16 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="nokids">Number of kids:</label>
+                                    <label for="inputChildren">Number of kids:</label>
                                     <div class="input-group">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[2]">
+                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="kids">
                                                 <span class="fa fa-minus"></span>
                                             </button>
                                         </span>
-                                        <input type="number" name="quant[2]" class="form-control input-number" value="0" min="0" max="10" id="nokids">
+                                        <input type="number" name="kids" class="form-control input-number" value="0" min="0" max="10" id="inputChildren">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[2]">
+                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="kids">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </span>
@@ -163,29 +180,16 @@
                         </div>
                         <div class="form-group">
                             <label for="textarea">Message:</label>
-                            <textarea class="form-control" id="textarea" rows="4" placeholder="Enter your message"></textarea>
+                            <textarea class="form-control" name="message" id="inputMessage" rows="4" placeholder="Enter your message"></textarea>
                         </div>
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="telephone">Telephone Number:</label>
-                                    <input type="tel" class="form-control" id="telephone" placeholder="Enter your telephone number">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="email">Email address:</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="name">Name:</label>
-                                    <input type="text" class="form-control" id="name" placeholder="Enter your name">
-                                </div>
-                            </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                <div id="alert"></div>
+                                <?php if ($common->isUserLoggedIn()) { ?>
+                                    <input type="button" onClick="sendReservation()" class="reservationButton btn btn-primary w-100" value="Submit"/>
+                                <?php } else { ?>
+                                    <a href="login.php" class="btn btn-primary w-100">Login to submit</a>
+                                <?php } ?>
                             </div>
                         </div>
                     </form>
@@ -240,8 +244,39 @@
     <script src="js/datepicker.min.js"></script>
     <script src="js/jquery.singlePageNav.min.js"></script>
     <script src="slick/slick.min.js"></script>
-    <script src="js/script.js"></script>
+    <script>
+        let reservations = <?= json_encode($reservations) ?>;
+
+        function sendReservation() {
+            console.log("clicked");
+            $.ajax({
+                url: 'reservations/create_reservation.php',
+                type: 'POST',
+                data: {
+                    'dateFrom': $('#dateFrom').val(),
+                    'dateTo': $('#dateTo').val(),
+                    'adults': $('#inputAdults').val(),
+                    'kids': $('#inputChildren').val(),
+                    'listingId': $('#inputListingId').val(),
+                    'message': $('#inputMessage').val()
+                },
+                success: function(data) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data["type"] == "success") {
+                        window.location.href = "reservations.php?reservation=success";
+                        return;
+                    }
+                    if($('#alert').children().length > 0) {
+                        $('#alert').children().remove();
+                    }
+                    $('#alert').append('<div class="alert rounded alert-'+ data["type"] +'" role="alert">'+data["message"]+'</div>');
+                }
+            });
+        }
+    </script>
     <script src="js/calendar.js"></script>
+    <script src="js/script.js"></script>
 
 </body>
 

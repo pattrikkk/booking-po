@@ -117,4 +117,121 @@ class DB
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $result["id"];
     }
+
+    public function createListing(string $name, string $location, string $description, int $rooms, int $beds,  string $amenities, int $price, int $publishedBy) {
+        $sql = "INSERT INTO listing (name, location, description, rooms, beds, amenities, price, publishedBy) VALUES (:name, :location, :description, :rooms, :beds, :amenities, :price, :publishedBy)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":location", $location);
+        $stmt->bindParam(":description", $description);
+        $stmt->bindParam(":rooms", $rooms);
+        $stmt->bindParam(":beds", $beds);
+        $stmt->bindParam(":amenities", $amenities);
+        $stmt->bindParam(":price", $price);
+        $stmt->bindParam(":publishedBy", $publishedBy);
+        return $stmt->execute();
+    }
+
+    public function getListings(): array
+    {
+        $sql = "SELECT * FROM listing";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getListing(int $id): array {
+        $sql = "SELECT * FROM listing WHERE id = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getCreatorOfListing(int $id): array {
+        $sql = "SELECT * FROM user WHERE id = (SELECT publishedBy FROM listing WHERE id = :id)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function updateListing(int $id, string $name, string $location, string $description, int $rooms, int $beds,  string $amenities, int $price, int $publishedBy) {
+        $sql = "UPDATE listing SET name = :name, location = :location, description = :description, rooms = :rooms, beds = :beds, amenities = :amenities, price = :price, publishedBy = :publishedBy WHERE id = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":location", $location);
+        $stmt->bindParam(":description", $description);
+        $stmt->bindParam(":rooms", $rooms);
+        $stmt->bindParam(":beds", $beds);
+        $stmt->bindParam(":amenities", $amenities);
+        $stmt->bindParam(":price", $price);
+        $stmt->bindParam(":publishedBy", $publishedBy);
+        return $stmt->execute();
+    }
+
+    public function deleteListing(int $id) {
+        $sql = "DELETE FROM listing WHERE id = :id";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
+    }
+
+    public function checkReservationOverlap(int $listingId, string $dateFrom, string $dateTo): bool {
+        $sql = "SELECT * FROM reservation WHERE listingId = :listingId AND ((dateFrom <= :dateFrom AND dateTo >= :dateFrom) OR (dateFrom <= :dateTo AND dateTo >= :dateTo))";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->bindParam(":dateFrom", $dateFrom);
+        $stmt->bindParam(":dateTo", $dateTo);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return !empty($result);
+    }
+
+    public function createReservation(int $userId, int $listingId, string $dateFrom, string $dateTo, string $message, int $adults, int $children): bool {
+        $sql = "INSERT INTO reservation (userId, listingId, dateFrom, dateTo, message, adults, children) VALUES (:userId, :listingId, :dateFrom, :dateTo, :message, :adults, :children)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->bindParam(":dateFrom", $dateFrom);
+        $stmt->bindParam(":dateTo", $dateTo);
+        $stmt->bindParam(":message", $message);
+        $stmt->bindParam(":adults", $adults);
+        $stmt->bindParam(":children", $children);
+        return $stmt->execute();
+    }
+
+    public function getListingReservations(int $listingId): array {
+        $sql = "SELECT dateFrom, dateTo FROM reservation WHERE listingId = :listingId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getReservations(int $userId): array {
+        $sql = "SELECT * FROM reservation WHERE userId = :userId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function checkReservationOwner(int $reservationId, int $userId): bool {
+        $sql = "SELECT * FROM reservation WHERE id = :reservationId AND userId = :userId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return !empty($result);
+    }
+
+    public function deleteReservation(int $reservationId) {
+        $sql = "DELETE FROM reservation WHERE id = :reservationId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        return $stmt->execute();
+    }
 }

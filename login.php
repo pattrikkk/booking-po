@@ -2,7 +2,7 @@
     require_once 'lib/Common.php';
     use lib\Common;
     $common = new \lib\Common();
-    if(isset($_SESSION['user_id'])){
+    if ($common->isUserLoggedIn()) {
         header('Location: index.php');
     }
 ?>

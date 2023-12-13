@@ -611,6 +611,16 @@ video {
 	color: white;
 }
 
+.reservation-start {
+	background: linear-gradient(45deg,white, #cc6368);
+	color: white;
+}
+
+.reservation-end {
+	background: linear-gradient(45deg,#cc6368, white);
+	color: white;
+}
+
 .tm-icon-number {
 	left: 50px;
 	z-index:100;
@@ -626,4 +636,9 @@ video {
 	max-width: 400px;
 	margin: auto;
 	margin-top: 50px;
+}
+
+.btn-primary:disabled {
+	background-color: #ee5057;
+	border-color: #ee5057;
 }
