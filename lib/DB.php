@@ -177,4 +177,36 @@ class DB
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }
+
+    public function checkReservationOverlap(int $listingId, string $dateFrom, string $dateTo): bool {
+        $sql = "SELECT * FROM reservation WHERE listingId = :listingId AND ((dateFrom <= :dateFrom AND dateTo >= :dateFrom) OR (dateFrom <= :dateTo AND dateTo >= :dateTo))";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->bindParam(":dateFrom", $dateFrom);
+        $stmt->bindParam(":dateTo", $dateTo);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return !empty($result);
+    }
+
+    public function createReservation(int $userId, int $listingId, string $dateFrom, string $dateTo, string $message, int $adults, int $children): bool {
+        $sql = "INSERT INTO reservation (userId, listingId, dateFrom, dateTo, message, adults, children) VALUES (:userId, :listingId, :dateFrom, :dateTo, :message, :adults, :children)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->bindParam(":dateFrom", $dateFrom);
+        $stmt->bindParam(":dateTo", $dateTo);
+        $stmt->bindParam(":message", $message);
+        $stmt->bindParam(":adults", $adults);
+        $stmt->bindParam(":children", $children);
+        return $stmt->execute();
+    }
+
+    public function getListingReservations(int $listingId): array {
+        $sql = "SELECT dateFrom, dateTo FROM reservation WHERE listingId = :listingId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

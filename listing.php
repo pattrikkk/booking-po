@@ -9,6 +9,7 @@ $db = new \lib\DB();
 
 if (isset($_GET['id'])) {
     $listing = $db->getListing($_GET['id']);
+    $reservations = $db->getListingReservations($_GET['id']);
     $amenities = json_decode($listing['amenities']);
 
     $creator = $db->getCreatorOfListing($_GET['id']);
@@ -125,32 +126,33 @@ if (isset($_GET['id'])) {
             <div class="row">
                 <div class="col-md-6 my-3">
                     <form class="border rounded p-4">
+                        <input type="hidden" name="listingId" id="inputListingId" value="<?= $listing["id"] ?>">
                         <h2 class="text-center mb-4">Reservation Form</h2>
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label for="arrival">Arrival:</label>
-                                    <input type="date" class="form-control" id="arrival">
+                                    <input type="date" class="form-control" name="dateFrom" id="dateFrom">
                                 </div>
                             </div>
                             <div class=" col-lg-6">
                                 <div class="form-group">
                                     <label for="departure">Departure:</label>
-                                    <input type="date" class="form-control" id="departure">
+                                    <input type="date" class="form-control" name="dateTo" id="dateTo">
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="noadults">Number of adults:</label>
+                                    <label for="inputAdults">Number of adults:</label>
                                     <div class="input-group">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="adults">
                                                 <span class="fa fa-minus"></span>
                                             </button>
                                         </span>
-                                        <input type="number" name="quant[1]" class="form-control input-number" value="1" min="1" max="10" id="noadults">
+                                        <input type="number" name="adults" class="form-control input-number" value="1" min="1" max="10" id="inputAdults">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
+                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="adults">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </span>
@@ -159,16 +161,16 @@ if (isset($_GET['id'])) {
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                    <label for="nokids">Number of kids:</label>
+                                    <label for="inputChildren">Number of kids:</label>
                                     <div class="input-group">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[2]">
+                                            <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="kids">
                                                 <span class="fa fa-minus"></span>
                                             </button>
                                         </span>
-                                        <input type="number" name="quant[2]" class="form-control input-number" value="0" min="0" max="10" id="nokids">
+                                        <input type="number" name="kids" class="form-control input-number" value="0" min="0" max="10" id="inputChildren">
                                         <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[2]">
+                                            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="kids">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </span>
@@ -178,29 +180,16 @@ if (isset($_GET['id'])) {
                         </div>
                         <div class="form-group">
                             <label for="textarea">Message:</label>
-                            <textarea class="form-control" id="textarea" rows="4" placeholder="Enter your message"></textarea>
+                            <textarea class="form-control" name="message" id="inputMessage" rows="4" placeholder="Enter your message"></textarea>
                         </div>
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="telephone">Telephone Number:</label>
-                                    <input type="tel" class="form-control" id="telephone" placeholder="Enter your telephone number">
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="email">Email address:</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="name">Name:</label>
-                                    <input type="text" class="form-control" id="name" placeholder="Enter your name">
-                                </div>
-                            </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                <div id="alert"></div>
+                                <?php if ($common->isUserLoggedIn()) { ?>
+                                    <input type="button" onClick="sendReservation()" class="reservationButton btn btn-primary w-100" value="Submit"/>
+                                <?php } else { ?>
+                                    <a href="login.php" class="btn btn-primary w-100">Login to submit</a>
+                                <?php } ?>
                             </div>
                         </div>
                     </form>
@@ -256,7 +245,11 @@ if (isset($_GET['id'])) {
     <script src="js/jquery.singlePageNav.min.js"></script>
     <script src="slick/slick.min.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        let reservations = <?= json_encode($reservations) ?>;
+    </script>
     <script src="js/calendar.js"></script>
+    <script src="js/script.js"></script>
 
 </body>
 

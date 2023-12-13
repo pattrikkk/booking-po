@@ -1,5 +1,22 @@
 let currentDate = new Date();
 
+function fillDaysBetween(start, end) {
+    const days = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        days.push(new Date(d).toISOString().split('T')[0]);
+    }
+    return days;
+}
+
+let allReservedDays = [];
+for (let i = 0; i < reservations.length; i++) {
+    const reservation = reservations[i];
+    const days = fillDaysBetween(new Date(reservations[i]['dateFrom']), new Date(reservations[i]['dateTo']));
+    allReservedDays = allReservedDays.concat(days);
+}
+
+console.log(allReservedDays);
+
 function generateCalendar() {
     const monthYearString = currentDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
     document.getElementById('currentMonth').innerText = monthYearString;
@@ -16,9 +33,9 @@ function generateCalendar() {
     }
 
     for (let day = 1; day <= lastDay.getDate(); day++) {
-        const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toISOString().split('T')[0];
-
-        if (reservations.includes(dateStr)) {
+        const dateStr = new Date(currentDate.getFullYear(), currentDate.getMonth(), day + 1).toISOString().split('T')[0];
+        console.log(dateStr);
+        if (allReservedDays.includes(dateStr)) {
             html += `<td class="reservation">${day}</td>`;
         } else {
             html += `<td>${day}</td>`;
@@ -42,9 +59,6 @@ function prevMonth() {
     currentDate.setMonth(currentDate.getMonth() - 1);
     generateCalendar();
 }
-
-// Replace this array with your reservation dates (in the format YYYY-MM-DD)
-const reservations = ['2023-12-10', '2023-12-15', '2023-12-20'];
 
 // Initialize the calendar
 generateCalendar();

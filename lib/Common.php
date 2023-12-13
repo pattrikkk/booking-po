@@ -39,6 +39,20 @@ class Common
                 "message" => "Listing edited successfully."
             ],
         ],
+        "reservation" => [
+            "success" => [
+                "type" => "success",
+                "message" => "Reservation created successfully."
+            ],
+            "overlap" => [
+                "type" => "danger",
+                "message" => "Reservation overlaps with existing reservation."
+            ],
+            "invalidDates" => [
+                "type" => "danger",
+                "message" => "Invalid dates."
+            ]
+        ]
     ];
 
     private $amenities = [
@@ -63,6 +77,11 @@ class Common
                 echo "<div class=\" mt-3 rounded alert alert-{$alert['type']}\">{$alert['message']}</div>";
             }
         }
+    }
+
+    function getAlert(string $param, string $type): array
+    {
+        return $this->alerts[$param][$type];
     }
 
     function startSession(): void

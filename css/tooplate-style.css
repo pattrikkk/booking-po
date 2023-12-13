@@ -627,3 +627,8 @@ video {
 	margin: auto;
 	margin-top: 50px;
 }
+
+.btn-primary:disabled {
+	background-color: #ee5057;
+	border-color: #ee5057;
+}
