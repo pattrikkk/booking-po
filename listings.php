@@ -27,7 +27,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Level HTML Template by Tooplate</title>
+    <title>Listings</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -132,7 +132,7 @@
                         <div class="rounded bg-light p-3 mb-4">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <img src="placeholder.png" class="img-fluid rounded" alt="Listing Image">
+                                    <img src="img/listings/<?=$listing['id']?>/image_0.jpg" class="img-fluid img-medium rounded" alt="Listing Image">
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="d-flex flex-column h-100">

@@ -15,6 +15,11 @@ if (isset($_GET['id'])) {
     $creator = $db->getCreatorOfListing($_GET['id']);
     $creatorName = $creator['firstName'] . " " . $creator['lastName'];
     $creatorPhone = $creator['phone'];
+
+    $images = scandir('img/listings/' . $listing['id']);
+    $images = array_filter($images, function ($image) {
+        return $image !== '.' && $image !== '..' && $image !== 'image_0.jpg';
+    });
 } else {
     header('Location: listings.php');
     exit();
@@ -30,7 +35,7 @@ if (isset($_GET['id'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Level HTML Template by Tooplate</title>
+    <title><?= $listing['name'] ?></title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -51,18 +56,17 @@ if (isset($_GET['id'])) {
             <div class="row">
                 <!-- Main Image Section -->
                 <div class="col-md-8">
-                    <img src="placeholder.png" class="img-fluid rounded mb-4" alt="Main Image">
+                    <img src="img/listings/<?=$listing['id']?>/image_0.jpg" class="img-fluid img-large rounded mb-4" alt="Listing Image">
                 </div>
     
                 <!-- Side Images Section -->
                 <div class="col-md-4">
                     <div class="row">
-                        <div class="col-6">
-                            <img src="placeholder.png" class="img-fluid rounded mb-2" alt="Side Image 1">
-                        </div>
-                        <div class="col-6">
-                            <img src="placeholder.png" class="img-fluid rounded mb-2" alt="Side Image 2">
-                        </div>
+                        <?php foreach ($images as $image) { ?>
+                            <div class="col-6">
+                                <img src="img/listings/<?=$listing['id']?>/<?=$image?>" class="img-fluid img-small rounded mb-2" alt="Side Image 1">
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -120,13 +124,13 @@ if (isset($_GET['id'])) {
                             <a href="#" class="btn btn-primary w-100">Contact</a>
                                 <?php if ($common->isUserLoggedIn() && $listing['publishedBy'] === $_SESSION['user_id']) { ?>
                                     <div class="row mt-2">
-                                        <div class="col-12">
+                                        <div class="col-md-12">
                                             <a href="manage_reservations.php?id=<?= $listing['id'] ?>" class="btn btn-primary w-100 mb-2">Manage reservations</a>
                                         </div>
-                                        <div class="col-md-6">
-                                            <a href="listings/delete_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary">Delete listing</a>
+                                        <div class="col-6">
+                                            <a href="listings/delete_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary w-100">Delete listing</a>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-6">
                                             <a href="update_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary w-100">Update listing</a>
                                         </div>
                                     </div>

@@ -16,6 +16,11 @@ if (!$common->isUserLoggedIn() || $creator['id'] !== $_SESSION['user_id']) {
 }
 $listing = $db->getListing($_GET['id']);
 $amenities = json_decode($listing['amenities']);
+
+$images = scandir('img/listings/' . $listing['id']);
+$images = array_filter($images, function ($image) {
+    return $image !== '.' && $image !== '..';
+});
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +31,11 @@ $amenities = json_decode($listing['amenities']);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Level HTML Template by Tooplate</title>
+    <title>Update listing</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="slick/slick.css" />
     <link rel="stylesheet" type="text/css" href="slick/slick-theme.css" />
@@ -56,9 +62,16 @@ $amenities = json_decode($listing['amenities']);
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="mainImage">Main Image:</label>
-                            <input type="file" class="form-control-file" id="mainImage" name="mainImage" accept="image/*" required>
+                            <label for="mainImages">Main Images:</label>
+                            <input type="file" class="form-control-file" id="mainImages" name="mainImages[]" accept="image/*" multiple>
                         </div>
+                        <h5>Image Order</h5>
+                        <div id="images" class="image-container">
+                            <?php foreach ($images as $image) { ?>
+                                <img src="img/listings/<?=$listing['id']?>/<?=$image?>" class="image-preview" style="width: 100px; margin-right: 10px;">
+                            <?php } ?>
+                        </div>
+                        <input type="hidden" name="imageOrder" id="imageOrder" value="">
                     </div>
                 </div>
 
@@ -126,6 +139,51 @@ $amenities = json_decode($listing['amenities']);
     <script src="slick/slick.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/calendar.js"></script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+
+
+<script>
+
+var container = document.getElementById('images');
+var drake = dragula([container]);
+
+document.getElementById('mainImages').addEventListener('change', function (event) {
+    var imagesContainer = document.getElementById('images');
+    imagesContainer.innerHTML = '';
+
+    var files = event.target.files;
+    for (var i = 0; i < files.length; i++) {
+        var image = document.createElement('img');
+        image.src = URL.createObjectURL(files[i]);
+        image.name = files[i].name;
+        image.classList.add('image-preview');
+        image.style.width = '100px';
+        image.style.marginRight = '10px';
+        imagesContainer.appendChild(image);
+    }
+
+
+    updateImageOrder();
+});
+
+drake.on('dragend', function () {
+    updateImageOrder();
+});
+
+function updateImageOrder() {
+    var imageOrder = [];
+    var images = document.getElementsByClassName('image-preview');
+    for (var i = 0; i < images.length; i++) {
+        imageOrder.push(images[i].name);
+    }
+
+    document.getElementById('imageOrder').value = imageOrder.join(',');
+
+    
+
+}
+</script>
 
 </body>
 

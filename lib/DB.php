@@ -4,7 +4,7 @@ namespace lib;
 
 class DB
 {
-    private $host = "db";
+    private $host = "localhost";
     private $port = 3306;
     private $username = "root";
     private $password = "";
@@ -129,7 +129,8 @@ class DB
         $stmt->bindParam(":amenities", $amenities);
         $stmt->bindParam(":price", $price);
         $stmt->bindParam(":publishedBy", $publishedBy);
-        return $stmt->execute();
+        $stmt->execute();
+        return $this->connection->lastInsertId();
     }
 
     public function getListings(): array

@@ -27,6 +27,33 @@
 
         $db->updateListing($id, $name, $location, $description, $rooms, $beds, $amenities, $price, $publishedBy);
 
+        
+        $mainImages = $_FILES["mainImages"];
+
+        $uploadDir = "../img/listings/" . $id . "/";
+        $imageOrder = $_POST["imageOrder"];
+
+        $uploadedImages = array();
+        $orderArray = explode(',', $imageOrder);
+
+        foreach ($orderArray as $index => $imageSrc) {
+            if (!empty($imageSrc)) {
+
+                $image = $mainImages['tmp_name'][array_search($imageSrc, $mainImages['name'])];
+                
+                $imageName = 'image_' . $index . '.jpg';
+                $imagePath = $uploadDir . $imageName;
+                $uploadedImages[] = $imagePath;
+
+
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
+                file_put_contents($imagePath, file_get_contents($image));
+            }
+        }
+
         header("Location: ../listing.php?id=$id&listing=edited");
         exit();
     } else {

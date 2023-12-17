@@ -11,7 +11,9 @@ $common->startSession();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Level HTML Template by Tooplate</title>
+    <title>Booking</title>
+
+
 <!--
 
 Tooplate 2095 Level
