@@ -118,7 +118,20 @@ if (isset($_GET['id'])) {
                             <p class="card-text"><?= $creatorPhone ?></p>
                             <p class="card-text"><small class="text-muted">Published on: <?= $listing["publishedDate"] ?></small></p>
                             <a href="#" class="btn btn-primary w-100">Contact</a>
-                        </div>
+                                <?php if ($common->isUserLoggedIn() && $listing['publishedBy'] === $_SESSION['user_id']) { ?>
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <a href="manage_reservations.php?id=<?= $listing['id'] ?>" class="btn btn-primary w-100 mb-2">Manage reservations</a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a href="listings/delete_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary">Delete listing</a>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <a href="update_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary w-100">Update listing</a>
+                                        </div>
+                                    </div>
+                                <?php } ?> 
+                        </div>              
                     </div>
                 </div>
             </div>

@@ -218,6 +218,14 @@ class DB
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function getReservationsForListing(int $listingId): array {
+        $sql = "SELECT * FROM reservation WHERE listingId = :listingId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":listingId", $listingId);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function checkReservationOwner(int $reservationId, int $userId): bool {
         $sql = "SELECT * FROM reservation WHERE id = :reservationId AND userId = :userId";
         $stmt = $this->connection->prepare($sql);
@@ -228,10 +236,70 @@ class DB
         return !empty($result);
     }
 
+    public function getReservationOwner(int $reservationId): array {
+        $sql = "SELECT * FROM user WHERE id = (SELECT userId FROM reservation WHERE id = :reservationId)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function changeReservationStatus(int $reservationId, int $status) {
+        $sql = "UPDATE reservation SET approved = :status WHERE id = :reservationId";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        $stmt->bindParam(":status", $status);
+        return $stmt->execute();
+    }
+
+    public function getListingFromReservationID(int $reservationId): array {
+        $sql = "SELECT * FROM listing WHERE id = (SELECT listingId FROM reservation WHERE id = :reservationId)";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(":reservationId", $reservationId);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
     public function deleteReservation(int $reservationId) {
         $sql = "DELETE FROM reservation WHERE id = :reservationId";
         $stmt = $this->connection->prepare($sql);
         $stmt->bindParam(":reservationId", $reservationId);
         return $stmt->execute();
+    }
+
+    public function filterReservations(String $city, String $dateFrom, String $dateTo, int $adults, int $children, int $rooms, bool $listingsbyme): array {
+        $city = "%" . $city . "%";
+        $sql = "SELECT * FROM listing 
+        WHERE location LIKE :city 
+        AND rooms >= :rooms 
+        AND id NOT IN (
+            SELECT listingId FROM reservation 
+            WHERE (
+                STR_TO_DATE(:dateFrom, '%d.%m.%Y') <= dateTo 
+                AND STR_TO_DATE(:dateTo, '%d.%m.%Y') >= dateFrom
+            )
+            OR (
+                STR_TO_DATE(:dateFrom, '%d.%m.%Y') <= dateTo 
+                AND STR_TO_DATE(:dateTo, '%d.%m.%Y') >= dateTo
+            )
+        )
+        AND :adults + :children <= beds";
+        if ($listingsbyme) {
+            $sql .= " AND publishedBy = :userId";
+        }
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(':city', $city, \PDO::PARAM_STR);
+        $stmt->bindParam(':rooms', $rooms, \PDO::PARAM_INT);
+        $stmt->bindParam(':dateFrom', $dateFrom, \PDO::PARAM_STR);
+        $stmt->bindParam(':dateTo', $dateTo, \PDO::PARAM_STR);
+        $stmt->bindParam(':adults', $adults, \PDO::PARAM_INT);
+        $stmt->bindParam(':children', $children, \PDO::PARAM_INT);
+        if ($listingsbyme) {
+            $stmt->bindParam(':userId', $_SESSION['user_id'], \PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 }

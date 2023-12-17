@@ -24,9 +24,6 @@
                 <div id="mainNav" class="collapse navbar-collapse tm-bg-white">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home <span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item">
                         <a class="nav-link" href="listings.php">Listings</a>
                         </li>
                         <?php if ($common->isUserLoggedIn()) { ?>

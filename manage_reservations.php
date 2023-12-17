@@ -4,11 +4,22 @@
     $common = new \lib\Common();
     $db = new \lib\DB();
 
+    $common->startSession();
+
     if (!$common->isUserLoggedIn()) {
         header('Location: index.php');
     }
 
-    $reservations = $db->getReservations($_SESSION['user_id']);
+    if (!isset($_GET['id'])) {
+        header('Location: index.php');
+    }
+
+    $creator = $db->getCreatorOfListing($_GET['id']);
+    if ($creator['id'] !== $_SESSION['user_id']) {
+        header('Location: index.php');
+    }
+
+    $reservations = $db->getReservationsForListing($_GET['id']);
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +72,7 @@
 
                         <div id="collapse<?=$reservation['id']?>" class="collapse show" aria-labelledby="heading<?=$reservation['id']?>" data-parent="#accordion">
                             <div class="card-body">
-                                <b>Your message: </b><?= $reservation['message'] ?>
+                                <b>Message: </b><?= $reservation['message'] ?>
                             </div>
                             <div class="row">
                                 <div class="col-4">
@@ -81,9 +92,20 @@
                                         <b>Price:</b> <?= $listing['price'] ?>€/night
                                     </div>
                                 </div>
+                                <div class="col-4">
+                                    <div class="card-body">
+                                        <?php 
+                                            $owner = $db->getReservationOwner($reservation['id']);
+                                        ?>
+                                        <div><b>Reservation created by:</b> <?= $owner['firstName'] . " " . $owner['lastName']?></div>
+                                        <div><b>Email:</b> <?= $owner['email']?></div>
+                                        <div><b>Phone:</b> <?= $owner['phone']?></div>
+                                    </div>
+                                </div>
                             </div>
                             <a href="listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary m-2" target="_blank">View listing</a>
-                            <a href="reservations/delete_reservation.php?id=<?= $reservation['id'] ?>" class="btn btn-primary m-2">Delete</a>
+                            <a href="reservations/change_status.php?id=<?= $reservation['id'] ?>&status=1" class="btn btn-primary m-2">Approve</a>
+                            <a href="reservations/change_status.php?id=<?= $reservation['id'] ?>&status=2" class="btn btn-primary m-2">Reject</a>
                         </div>
                     </div>
                 <?php } ?>

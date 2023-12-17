@@ -6,6 +6,17 @@
     $db = new lib\DB();
 
     $common->startSession();
+
+
+    $city = filter_var(isset($_GET["city"]) ? $_GET["city"] : "", FILTER_SANITIZE_STRING);
+    $checkIn = filter_var(isset($_GET["check-in"]) ? $_GET["check-in"] : "", FILTER_SANITIZE_STRING);
+    $checkOut = filter_var(isset($_GET["check-out"]) ? $_GET["check-out"] : "", FILTER_SANITIZE_STRING);
+    $noAdults = filter_var(isset($_GET["noadults"]) ? $_GET["noadults"] : 0, FILTER_SANITIZE_NUMBER_INT);
+    $noKids = filter_var(isset($_GET["nokids"]) ? $_GET["nokids"] : 0, FILTER_SANITIZE_NUMBER_INT);
+    $noRooms = filter_var(isset($_GET["norooms"]) ? $_GET["norooms"] : 0, FILTER_SANITIZE_NUMBER_INT);
+    $listingsByMe = filter_var(isset($_GET["listings-by-me"]) ? $_GET["listings-by-me"] : false, FILTER_VALIDATE_BOOLEAN);
+
+    $listings = $db->filterReservations($city, $checkIn, $checkOut, $noAdults, $noKids, $noRooms, $listingsByMe);
 ?>
 
 <!DOCTYPE html>
@@ -39,33 +50,33 @@
                     <?php } ?>
                     <div class="card rounded">
                         <div class="card-body">
-                            <form action="index.php" method="get" class="tm-search-form">
+                            <form action="listings.php" method="get" class="tm-search-form">
                                 <div class="form-group tm-form-element tm-form-element-listing tm-form-element-100">
                                     <i class="fa fa-map-marker fa-2x tm-form-element-icon"></i>
                                     <input name="city" type="text" class="form-control" id="inputCity"
-                                        placeholder="Type your destination...">
+                                        placeholder="Type your destination..." value="<?= $city ?>">
                                 </div>
                                 <div class="form-group tm-form-element tm-form-element-listing tm-form-element-50">
                                     <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
                                     <input name="check-in" type="text" class="form-control" id="inputCheckIn"
-                                        placeholder="Check In">
+                                        placeholder="Check In" value="<?= $checkIn ?>">
                                 </div>
                                 <div class="form-group tm-form-element tm-form-element-listing tm-form-element-50">
                                     <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
                                     <input name="check-out" type="text" class="form-control" id="inputCheckOut"
-                                        placeholder="Check Out">
+                                        placeholder="Check Out" value="<?= $checkOut ?>">
                                 </div>
                                         <div class="form-group tm-form-element tm-form-element-listing tm-form-element-2">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                                                    <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="noadults">
                                                         <span class="fa fa-minus"></span>
                                                     </button>
                                                 </span>
-                                                <input type="number" name="quant[1]" class="form-control input-number" value="0" min="0" max="10" id="noadults">
+                                                <input type="number" name="noadults" class="form-control input-number" value=<?= $noAdults ?> min="0" max="10" id="noadults">
                                                 <i class="fa fa-2x fa-user tm-form-element-icon tm-icon-number"></i>
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[1]">
+                                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="noadults">
                                                         <span class="fa fa-plus"></span>
                                                     </button>
                                                 </span>
@@ -74,14 +85,14 @@
                                         <div class="form-group tm-form-element tm-form-element-listing tm-form-element-2">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[2]">
+                                                    <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="nokids">
                                                         <span class="fa fa-minus"></span>
                                                     </button>
                                                 </span>
-                                                <input type="number" name="quant[2]" class="form-control input-number" value="0" min="0" max="10" id="nokids">
+                                                <input type="number" name="nokids" class="form-control input-number" value=<?= $noKids ?> min="0" max="10" id="nokids">
                                                 <i class="fa fa-user tm-form-element-icon tm-icon-number tm-form-element-icon-small"></i>
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[2]">
+                                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="nokids">
                                                         <span class="fa fa-plus"></span>
                                                     </button>
                                                 </span>
@@ -90,29 +101,26 @@
                                         <div class="form-group tm-form-element tm-form-element-listing tm-form-element-2">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default btn-number" disabled="disabled" data-type="minus" data-field="quant[3]">
+                                                    <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="norooms">
                                                         <span class="fa fa-minus"></span>
                                                     </button>
                                                 </span>
-                                                <input type="number" name="quant[3]" class="form-control input-number" value="0" min="0" max="10" id="norooms">
+                                                <input type="number" name="norooms" class="form-control input-number" value=<?= $noRooms ?> min="0" max="10" id="norooms">
                                                 <i class="fa fa-2x fa-door-open tm-form-element-icon tm-icon-number"></i>
                                                 <span class="input-group-btn">
-                                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="quant[3]">
+                                                    <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="norooms">
                                                         <span class="fa fa-plus"></span>
                                                     </button>
                                                 </span>
                                             </div>
+                                        </div>
+                                        <div class="form-check pl-5">
+                                            <input type="checkbox" id="listings-by-me" name="listings-by-me" class="form-check-input" <?= $listingsByMe ? "checked" : ""?>>
+                                            <label class="form-check-label" for="listings-by-me">Listings by me</label>
                                         </div>
                                 <div class="form-group tm-form-element tm-form-element-listing tm-form-element-2">
                                     <button type="submit" class="btn btn-primary tm-btn-search">Check
                                         Availability</button>
-                                </div>
-                                <div class="form-row clearfix pl-2 pr-2 tm-fx-col-xs">
-                                    <p class="tm-margin-b-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                    </p>
-                                    <a href="#"
-                                        class="ie-10-ml-auto ml-auto mt-1 tm-font-semibold tm-color-primary">Need
-                                        Help?</a>
                                 </div>
                             </form>
                         </div>
@@ -120,7 +128,7 @@
                     </div>
                 </div>
                 <div class="col-lg-9">
-                    <?php foreach ($db->getListings() as $listing) { ?>
+                    <?php foreach ($listings as $listing) { ?>
                         <div class="rounded bg-light p-3 mb-4">
                             <div class="row">
                                 <div class="col-sm-4">
@@ -135,10 +143,6 @@
                                         <!-- Display price on the left -->
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h6 class="mb-0 font-weight-bold"><?= $listing['price'] ?>€/night</h6>
-                                            <?php if ($common->isUserLoggedIn() && $listing['publishedBy'] === $_SESSION['user_id']) { ?>
-                                                <a href="listings/delete_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary ml-auto mr-1">Delete listing</a>
-                                                <a href="update_listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary ml-auto mr-1">Update listing</a>
-                                            <?php } ?>
                                             <a href="listing.php?id=<?= $listing['id'] ?>" class="btn btn-primary">View Details</a>
                                         </div>
                                     </div>

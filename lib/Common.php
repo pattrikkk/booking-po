@@ -38,6 +38,10 @@ class Common
                 "type" => "success",
                 "message" => "Listing edited successfully."
             ],
+            "deleted" => [
+                "type" => "success",
+                "message" => "Listing deleted successfully."
+            ],
         ],
         "reservation" => [
             "success" => [

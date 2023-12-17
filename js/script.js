@@ -145,8 +145,18 @@ $(document).ready(function(){
     loadGoogleMap();  
 
     // Date Picker
-    const pickerCheckIn = datepicker('#inputCheckIn');
-    const pickerCheckOut = datepicker('#inputCheckOut');
+    const pickerCheckIn = datepicker('#inputCheckIn', {
+        formatter: (input, date, instance) => {
+            const value = date.toLocaleDateString()
+            input.value = value
+        }
+    })
+    const pickerCheckOut = datepicker('#inputCheckOut', {
+        formatter: (input, date, instance) => {
+            const value = date.toLocaleDateString()
+            input.value = value
+        }
+    })
     
     // Slick carousel
     setCarousel();
