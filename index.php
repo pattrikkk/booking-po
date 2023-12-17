@@ -1,3 +1,9 @@
+<?php
+require_once 'lib/Common.php';
+$common = new \lib\Common();
+$common->startSession();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

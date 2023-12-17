@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+  db:
+    build:
+      context: ./mysql
+    ports:
+      - "3306:3306"
