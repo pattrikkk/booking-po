@@ -26,7 +26,6 @@
         $uploadDir = "../img/listings/" . $id . "/";
         $imageOrder = $_POST["imageOrder"];
 
-        $uploadedImages = array();
         $orderArray = explode(',', $imageOrder);
         
 
@@ -37,7 +36,6 @@
                 
                 $imageName = 'image_' . $index . '.jpg';
                 $imagePath = $uploadDir . $imageName;
-                $uploadedImages[] = $imagePath;
 
 
                 if (!file_exists($uploadDir)) {

@@ -33,8 +33,15 @@
         $uploadDir = "../img/listings/" . $id . "/";
         $imageOrder = $_POST["imageOrder"];
 
-        $uploadedImages = array();
         $orderArray = explode(',', $imageOrder);
+
+        if (file_exists($uploadDir)) {
+            $files = glob($uploadDir . '*', GLOB_MARK);
+            foreach ($files as $file) {
+                unlink($file);
+            }
+            rmdir($uploadDir);
+        }
 
         foreach ($orderArray as $index => $imageSrc) {
             if (!empty($imageSrc)) {
@@ -43,7 +50,6 @@
                 
                 $imageName = 'image_' . $index . '.jpg';
                 $imagePath = $uploadDir . $imageName;
-                $uploadedImages[] = $imagePath;
 
 
                 if (!file_exists($uploadDir)) {
