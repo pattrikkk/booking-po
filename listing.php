@@ -16,10 +16,15 @@ if (isset($_GET['id'])) {
     $creatorName = $creator['firstName'] . " " . $creator['lastName'];
     $creatorPhone = $creator['phone'];
 
-    $images = scandir('img/listings/' . $listing['id']);
-    $images = array_filter($images, function ($image) {
-        return $image !== '.' && $image !== '..' && $image !== 'image_0.jpg';
-    });
+
+    if (file_exists('img/listings/' . $listing['id'])) {
+        $images = scandir('img/listings/' . $listing['id']);
+        $images = array_filter($images, function ($image) {
+            return $image !== '.' && $image !== '..' && $image !== 'image_0.jpg';
+        });
+    } else {
+        $images = [];
+    }
 } else {
     header('Location: listings.php');
     exit();
@@ -56,7 +61,11 @@ if (isset($_GET['id'])) {
             <div class="row">
                 <!-- Main Image Section -->
                 <div class="col-md-8">
-                    <img src="img/listings/<?=$listing['id']?>/image_0.jpg" class="img-fluid img-large rounded mb-4" alt="Listing Image">
+                    <?php if (file_exists('img/listings/' . $listing['id'] . '/image_0.jpg')) { ?>
+                        <img src="img/listings/<?=$listing['id']?>/image_0.jpg" class="img-fluid img-large rounded mb-4" alt="Listing Image">
+                    <?php } else { ?>
+                        <img src="placeholder.png" class="img-fluid img-large rounded mb-4" alt="Listing Image">
+                    <?php } ?>
                 </div>
     
                 <!-- Side Images Section -->

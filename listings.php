@@ -8,13 +8,15 @@
     $common->startSession();
 
 
-    $city = filter_var(isset($_GET["city"]) ? $_GET["city"] : "", FILTER_SANITIZE_STRING);
-    $checkIn = filter_var(isset($_GET["check-in"]) ? $_GET["check-in"] : "", FILTER_SANITIZE_STRING);
-    $checkOut = filter_var(isset($_GET["check-out"]) ? $_GET["check-out"] : "", FILTER_SANITIZE_STRING);
-    $noAdults = filter_var(isset($_GET["noadults"]) ? $_GET["noadults"] : 0, FILTER_SANITIZE_NUMBER_INT);
-    $noKids = filter_var(isset($_GET["nokids"]) ? $_GET["nokids"] : 0, FILTER_SANITIZE_NUMBER_INT);
-    $noRooms = filter_var(isset($_GET["norooms"]) ? $_GET["norooms"] : 0, FILTER_SANITIZE_NUMBER_INT);
-    $listingsByMe = filter_var(isset($_GET["listings-by-me"]) ? $_GET["listings-by-me"] : false, FILTER_VALIDATE_BOOLEAN);
+    $city = htmlspecialchars(isset($_GET["city"]) ? $_GET["city"] : "", ENT_QUOTES, 'UTF-8');
+    $checkIn = htmlspecialchars(isset($_GET["check-in"]) ? $_GET["check-in"] : "", ENT_QUOTES, 'UTF-8');
+    $checkOut = htmlspecialchars(isset($_GET["check-out"]) ? $_GET["check-out"] : "", ENT_QUOTES, 'UTF-8');
+
+    $noAdults = filter_var(isset($_GET["noadults"]) ? $_GET["noadults"] : 0, FILTER_VALIDATE_INT);
+    $noKids = filter_var(isset($_GET["nokids"]) ? $_GET["nokids"] : 0, FILTER_VALIDATE_INT);
+    $noRooms = filter_var(isset($_GET["norooms"]) ? $_GET["norooms"] : 0, FILTER_VALIDATE_INT);
+    
+    $listingsByMe = isset($_GET["listings-by-me"]) ? true : false;
 
     $listings = $db->filterReservations($city, $checkIn, $checkOut, $noAdults, $noKids, $noRooms, $listingsByMe);
 ?>
@@ -132,7 +134,11 @@
                         <div class="rounded bg-light p-3 mb-4">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <img src="img/listings/<?=$listing['id']?>/image_0.jpg" class="img-fluid img-medium rounded" alt="Listing Image">
+                                    <?php if (file_exists("img/listings/" . $listing['id'] . "/image_0.jpg")) { ?>
+                                        <img src="img/listings/<?= $listing['id'] ?>/image_0.jpg" class="img-fluid img-medium rounded" alt="Listing Image">
+                                    <?php } else { ?>
+                                        <img src="placeholder.png" class="img-fluid img-medium rounded" alt="Listing Image">
+                                    <?php } ?>
                                 </div>
                                 <div class="col-sm-8">
                                     <div class="d-flex flex-column h-100">
